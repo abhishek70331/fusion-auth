@@ -18,6 +18,7 @@ app.config['JWT_SECRET_KEY'] = 'helloworld'
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 
+
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key['api-key'] = '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'
 
