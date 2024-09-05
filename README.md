@@ -32,9 +32,6 @@
 
 ![Screenshot 2024-09-06 003445](https://github.com/user-attachments/assets/c5121fd2-4fdb-4905-a8eb-96a5788ff512)
 
-<h3>Invite Member</h3>
-
-![Screenshot 2024-09-06 003543](https://github.com/user-attachments/assets/2a43c7dd-62d8-45be-aa01-ab917c8c93f1)
 
 <h3>Invite Member</h3>
 
