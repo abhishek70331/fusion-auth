@@ -11,6 +11,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+#configure the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/fusion'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'helloworld'
@@ -23,6 +24,8 @@ configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key['api-key'] = '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'
 
 
+#function for sending the invite 
+# it is called while signup
 def send_invite_email(to_email, invite_link):
     api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
     subject = "You're invited!"
@@ -41,6 +44,8 @@ def send_invite_email(to_email, invite_link):
         print(f"Exception when calling Brevo API: {e}")
 
 
+#This is a function for login alert
+#it is called when you login to your account
 def send_login_alert(to_email):
     api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
     
@@ -57,7 +62,8 @@ def send_login_alert(to_email):
         print(f"Failed to send email: {e}")
 
 
-
+#This is a function for password update
+#it is called when you updaate the password
 def send_password_update_alert(to_email):
     api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
     
@@ -74,7 +80,7 @@ def send_password_update_alert(to_email):
         print(f"Failed to send email: {e}")
 
 
-
+#These are the databases schema
 class Organization(db.Model):
     __tablename__ = 'organization'
 
@@ -123,9 +129,13 @@ class Role(db.Model):
     description = db.Column(db.String(255), nullable=True)
     org_id = db.Column(db.Integer, db.ForeignKey("organization.id", ondelete="CASCADE"), nullable=False)
 
+#calling to create table
 with app.app_context():
     db.create_all() 
 
+#From here route has been started
+
+#This is a sign in route
 @app.route("/signin",methods=['POST'])
 def signin():
     data = request.json
@@ -136,6 +146,8 @@ def signin():
         return jsonify(access_token=access_token), 200
     return jsonify({"message":"Signin UnSuccessful"}), 401
 
+
+# This is a signup route
 @app.route("/signup", methods=["POST"])
 def signup():
     data = request.json
@@ -181,6 +193,8 @@ def signup():
 def signout():
     return jsonify({"message": "Signout successful"})
 
+
+# This is a reset password route
 @app.route("/resetpass", methods=["POST"])
 @jwt_required()
 def resetpass():
@@ -203,6 +217,8 @@ def resetpass():
 
     return jsonify({"message":"User not found"})
 
+
+# this is invitation route
 @app.route("/invite",methods=["POST"])
 @jwt_required()
 def invite():
@@ -241,7 +257,7 @@ def invite():
 
     return jsonify({"message":"Member invited successfully"})
 
-
+#This is to delete the route
 @app.route("/delete",methods=["POST"])
 @jwt_required()
 def delt():
@@ -257,6 +273,7 @@ def delt():
     return jsonify({"message":"member deleted"})
 
 
+#This is the update route
 @app.route("/update",methods=["POST"])
 @jwt_required()
 def updt():
@@ -272,6 +289,10 @@ def updt():
         return({"message":"Member role updated successfully"})
     return jsonify({"message":"member updated"})
 
+
+# From here Stats route has been started
+
+#This is role wise user route
 @app.route("/stats/role_wise_users",methods=["GET"])
 @jwt_required()
 def role_wise_user():
@@ -282,6 +303,7 @@ def role_wise_user():
     result = { role: count for role,count in role_count}
     return jsonify(result)
 
+#This is organization wise member
 @app.route("/stats/org_wise_member",methods=["GET"])
 @jwt_required()
 def org_wise_user():
@@ -293,6 +315,7 @@ def org_wise_user():
     return jsonify(result)
 
 
+#This is organization role wise users filter by datetime
 @app.route("/stats/org_role_wise_users", methods=["GET"])
 @jwt_required()
 def org_role_wise_users():
@@ -323,7 +346,7 @@ def org_role_wise_users():
 
     return jsonify(response)
 
-
+# This is role wise user filter by datetime
 @app.route("/stats/role_wise_users", methods=["GET"])
 @jwt_required()
 def role_wise_users():
